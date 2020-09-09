@@ -1,5 +1,3 @@
-const Podcast = require("./Podcast");
+const user = require("./User");
 
-module.exports = [
-  Podcast
-]
+module.exports = [user];
