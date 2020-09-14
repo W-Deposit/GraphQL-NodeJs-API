@@ -1,6 +1,14 @@
 const router = require('express').Router();
-
+const Joi = require('@hapi/joi');
 const User = require('../models/User.model');
+
+const Schema = {
+    name:Joi.string().min(6).required(),
+    firstname:Joi.string().min(6).required(),
+    nagenderme:Joi.string().min(6).required(),
+    phoneNumber:Joi.string().min(6).required(),
+    email:Joi.string().min(6).required().email()
+}
 
 router.post('/register', async (req, res) => {
     const user = new User({
