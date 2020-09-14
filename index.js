@@ -7,14 +7,16 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const app = express();
-app.use(cors());
 // import the route
+
+app.use(bodyParser.json());
+app.use(express.json());
 const apiRoute = require('./routes/api');
 app.use('/api', apiRoute);
 
-app.use(bodyParser.json());
 
-mongoose.connect(process.env.DBPATH, {useCreateIndex: true, useUnifiedTopology: true, useNewUrlParser: true}, () => {
+
+mongoose.connect(process.env.DBPATH, {useUnifiedTopology: true, useNewUrlParser: true}, () => {
     console.log('wdeposit mongoDB connected successfuly');
 }) 
     
