@@ -17,11 +17,11 @@ app.use('/api', apiRoute);
 
 
 mongoose.connect(process.env.DBPATH, {useUnifiedTopology: true, useNewUrlParser: true}, () => {
-    console.log('wdeposit mongoDB connected successfuly');
+    console.log('W-Deposit mongoDB connected successfuly');
 }) 
     
 
 
 const port = process.env.PORT || 3030;
 
-app.listen(port, () => console.log(`listen to requests on port: ${port} ........`));
+app.listen(port, () => console.log(`listen to requests : http://localhost: ${port} `));
