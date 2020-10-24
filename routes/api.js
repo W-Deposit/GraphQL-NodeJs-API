@@ -3,6 +3,10 @@ const router = require("express").Router();
 const User = require("../models/User.model");
 const { registerValidation } = require("../validation");
 
+router.get('/data', (req, res) => {
+  res.send('I am Working properly ...');
+})
+
 router.post("/register", async (req, res) => {
   //Validate the data with joi before send it to the database
   const { error } = registerValidation(req.body);
