@@ -30,6 +30,8 @@ const UserSchema = new Schemas({
     name: {type: String, required: true, trim: true},
     firstname: {type: String, required: true, trim: true},
     lastname: {type: String, trim: true},
+    username:{type: String, required:[true, 'the username cannot be empty']},
+    password:{type: String, required:[true, 'the password cannot be empty']},
     gender: {type: String, required: true},
     phoneNumber: {type: String, required: true, trim: true},
     email: {type: String, required: true, trim: true},
