@@ -14,7 +14,9 @@ app.use(express.json());
 const apiRoute = require('./routes/api');
 app.use('/api', apiRoute);
 
-
+app.get('/', (req, res) => {
+    res.json('The W-Deposit Api works fine .....');
+})
 
 mongoose.connect(process.env.DBPATH, {useUnifiedTopology: true, useNewUrlParser: true}, () => {
     console.log('W-Deposit mongoDB connected successfuly');
