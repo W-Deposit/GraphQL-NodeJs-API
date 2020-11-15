@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schemas = mongoose.Schema;
-
 const AddressSchema = new Schemas({
     avenue_and_number: {type: String, trim: true},
     quarter: {type: String, trim: true},
@@ -25,21 +24,37 @@ const WDepositToBankSchema = new Schemas({
     amount: {type: Number, trim: true},
     date_update: {type: Date, trim: true}
 });
-
-const UserSchema = new Schemas({
-    name: {type: String, required: true, trim: true},
-    firstname: {type: String, required: true, trim: true},
-    lastname: {type: String, trim: true},
-    gender: {type: String, required: true},
-    phoneNumber: {type: String, required: true, trim: true},
-    email: {type: String, required: true, trim: true},
-    password:{type:String,required:true,trim:true},
+const UserSchema = mongoose.Schema({
+    firstname: {
+        type: String, 
+        required: true
+        },
+    lastname: {
+        type: String,
+         required:true
+        },
+    gender: {
+        type: String, 
+        required: true
+    },
+    phonenumber: {
+        type: String, 
+        required: true
+     },
+    email: {type: String,
+         required: true
+        },
+    password:{
+        type:String,
+        required:true
+    },
     createdAt: {type: Date, default: Date.now},
     naissance: NaissanceSchema,
     address: AddressSchema,
     wdepositAccount: WDepositAccountSchema,
     wdepositToBank: WDepositToBankSchema
-    
 });
 
-module.exports = mongoose.model('User', UserSchema);
+
+// export model user with UserSchema
+module.exports = mongoose.model("user", UserSchema);
