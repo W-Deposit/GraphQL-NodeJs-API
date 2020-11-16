@@ -9,17 +9,12 @@ const User = require("../models/User.model");
 router.post(
   "/register",
   [
-    check("firstname", "Please Enter your firstname")
-      .not()
-      .isEmpty(),
+    check("firstname", "Please Enter your firstname").not().isEmpty(),
     check("gender","Please enter your gender").isLength({max:7}),
     check("lastname","Please enter your lastname").isLength(),
     check("email", "Please enter a valid email").isEmail(),
-    check("phonenumber","Please enter a valid mobile").not()
-    .isEmpty(),
-    check("password", "Please enter a valid password").isLength({
-      min: 6
-    })
+    check("phonenumber","Please enter a valid mobile").not().isEmpty(),
+    check("password", "Please enter a valid password").isLength({min: 6})
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -84,9 +79,7 @@ router.post(
   "/login",
   [
     check("email", "Please enter a valid email").isEmail(),
-    check("password", "Please enter a valid password").isLength({
-      min: 6
-    })
+    check("password", "Please enter a valid password").isLength({min: 6})
   ],
   async (req, res) => {
     const errors = validationResult(req);

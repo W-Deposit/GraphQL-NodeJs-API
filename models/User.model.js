@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schemas = mongoose.Schema;
+
 const AddressSchema = new Schemas({
     avenue_and_number: {type: String, trim: true},
     quarter: {type: String, trim: true},
@@ -14,13 +15,11 @@ const NaissanceSchema = new Schemas({
 });
 
 const WDepositAccountSchema = new Schemas({
-    motif: {type: String, trim: true}, // intitule
     amount: {type: Number, trim: true},
     date_update: {type: Date, trim: true}
 });
 
-const WDepositToBankSchema = new Schemas({
-    motif: {type: String, required: true}, // intitule
+const BankAccountSchema = new Schemas({
     amount: {type: Number,default:0,required:true},
     date_update: {type: Date},
    
@@ -53,9 +52,9 @@ const UserSchema = mongoose.Schema({
     naissance: NaissanceSchema,
     address: AddressSchema,
     wdepositAccount: WDepositAccountSchema,
-    wdepositToBank: WDepositToBankSchema
+    bankAccount: BankAccountSchema
 });
 
 
 // export model user with UserSchema
-module.exports = mongoose.model("user", UserSchema);
+module.exports = mongoose.model("users", UserSchema);
