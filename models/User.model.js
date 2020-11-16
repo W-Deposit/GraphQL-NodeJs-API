@@ -20,9 +20,10 @@ const WDepositAccountSchema = new Schemas({
 });
 
 const WDepositToBankSchema = new Schemas({
-    motif: {type: String, trim: true}, // intitule
-    amount: {type: Number, trim: true},
-    date_update: {type: Date, trim: true}
+    motif: {type: String, required: true}, // intitule
+    amount: {type: Number,default:0,required:true},
+    date_update: {type: Date},
+   
 });
 const UserSchema = mongoose.Schema({
     firstname: {
