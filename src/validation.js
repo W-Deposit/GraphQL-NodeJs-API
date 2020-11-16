@@ -8,6 +8,7 @@ const registerValidation = (data) => {
     lastname: Joi.string().min(6).required(),
     phoneNumber: joi.string().length(10).pattern(/^[0-9]+$/).required(),
     email: Joi.string().min(6).required().email(),
+    password:Joi.string.required()
   };
   return Joi.validate(data, schema);
 };
