@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schemas = mongoose.Schema;
+const ObjectID = mongoose.ObjectID;
 
 const AddressSchema = new Schemas({
     avenue_and_number: {type: String, trim: true},
@@ -14,16 +15,6 @@ const NaissanceSchema = new Schemas({
     date_naissance: {type: Date, trim: true}
 });
 
-const WDepositAccountSchema = new Schemas({
-    amount: {type: Number, trim: true},
-    date_update: {type: Date, trim: true}
-});
-
-const BankAccountSchema = new Schemas({
-    amount: {type: Number,default:0,required:true},
-    date_update: {type: Date},
-   
-});
 const UserSchema = mongoose.Schema({
     firstname: {
         type: String, 
@@ -51,10 +42,15 @@ const UserSchema = mongoose.Schema({
     createdAt: {type: Date, default: Date.now},
     naissance: NaissanceSchema,
     address: AddressSchema,
-    wdepositAccount: WDepositAccountSchema,
-    bankAccount: BankAccountSchema
+    accounts_wdeposit: {
+            balance: {type: Number, default: 0},
+            createAt: {type: Date, default: Date.now()}
+    },
+    accounts_equity: {
+        balance: {type: Number, default: 0},
+        createAt: {type: Date, default: Date.now()}
+},
 });
 
 
-// export model user with UserSchema
 module.exports = mongoose.model("users", UserSchema);
