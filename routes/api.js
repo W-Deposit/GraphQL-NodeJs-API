@@ -162,7 +162,9 @@ router.post('/envoyer', async (req, res) => {
           let solde = user_found.wdeposit;
           let newSolde = solde + montant;
 
-          User.findOneAndUpdate( user_found.wdeposit, {$set: { wdeposit: newSolde} },{new: true} ,(err, result) => {
+          User.findOneAndUpdate( {
+            compte : compte
+          }, {$set: { wdeposit: newSolde} },{new: true} ,(err, result) => {
               if(err) throw err;
               console.log(user_found.wdeposit)
               res.json(result);
