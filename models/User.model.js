@@ -16,40 +16,24 @@ const NaissanceSchema = new Schemas({
 });
 
 const UserSchema = mongoose.Schema({
-    firstname: {
-        type: String, 
-        required: true
-        },
-    lastname: {
-        type: String,
-         required:true
-        },
-    gender: {
-        type: String, 
-        required: true
-    },
-    phonenumber: {
-        type: String, 
-        required: true
-     },
-    email: {type: String,
-         required: true
-        },
-    password:{
-        type:String,
-        required:true
-    },
+    firstname: { type: String, required: true },
+    lastname: { type: String, required:true },
+    gender: { type: String, required: true },
+    phonenumber: { type: String, required: true },
+    email: { type: String, required: true },
+    password:{ type:String, required:true },
     createdAt: {type: Date, default: Date.now},
     naissance: NaissanceSchema,
     address: AddressSchema,
     accounts_wdeposit: {
-            balance: {type: Number, default: 0},
-            createAt: {type: Date, default: Date.now()}
+        balance: {type: Number, default: 0},
+        createAt: {type: Date, default: Date.now()}
     },
+    acount_number: {type: String },
     accounts_equity: {
         balance: {type: Number, default: 0},
         createAt: {type: Date, default: Date.now()}
-},
+    }
 });
 
 
