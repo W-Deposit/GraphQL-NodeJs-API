@@ -24,7 +24,7 @@ router.post(
       });
     }
 
-    const { firstname,lastname,gender,phonenumber, email, password } = req.body;
+    const { firstname,lastname,gender,phonenumber, email, password, compte, wdeposit } = req.body;
     try {
       let user = await User.findOne({
         email
@@ -41,7 +41,9 @@ router.post(
         firstname,
         lastname,
         gender,
-        phonenumber
+        phonenumber,
+        compte,
+        wdeposit
       });
 
       const salt = await bcrypt.genSalt(10);
@@ -141,6 +143,33 @@ router.get("/me", auth, async (req, res) => {
   } catch (e) {
     res.send({ message: "Error in Fetching user" });
   }
+});
+
+router.post('/envoyer', async (req, res) => {
+  
+  const {compte , montant} = req.body;
+  if(!compte || !montant) {
+    res.status(400).json('Le compte ou le montant ne doit pas etre vide')
+  }
+  console.log(`le montant à envoyer vaut ${montant}`);
+  
+  await User.findOne({compte})
+    .then(user_found =>{
+        if(!user_found){
+          res.status(400).json(`Ce compte: ${compte} n'existe pas `);
+        }else{
+          console.log(JSON.stringify(user_found))
+          let solde = user_found.wdeposit;
+          let newSolde = solde + montant;
+
+          User.findOneAndUpdate( user_found.wdeposit, {$set: { wdeposit: newSolde} },{new: true} ,(err, result) => {
+              if(err) throw err;
+              console.log(user_found.wdeposit)
+              res.json(result);
+          });
+        }            
+    })      
+    .catch(err => res.status(400).json({message: err}));
 });
 
 module.exports = router;

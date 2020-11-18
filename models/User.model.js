@@ -22,18 +22,9 @@ const UserSchema = mongoose.Schema({
     phonenumber: { type: String, required: true },
     email: { type: String, required: true },
     password:{ type:String, required:true },
-    createdAt: {type: Date, default: Date.now},
-    naissance: NaissanceSchema,
-    address: AddressSchema,
-    accounts_wdeposit: {
-        balance: {type: Number, default: 0},
-        createAt: {type: Date, default: Date.now()}
-    },
-    acount_number: {type: String },
-    accounts_equity: {
-        balance: {type: Number, default: 0},
-        createAt: {type: Date, default: Date.now()}
-    }
+    compte: {type: String },
+    wdeposit: {type: Number, default: 0 },
+    createdAt: {type: Date, default: Date.now}
 });
 
 
