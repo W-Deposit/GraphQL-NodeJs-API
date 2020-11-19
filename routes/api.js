@@ -5,7 +5,37 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const User = require("../models/User.model");
+const  Transaction_history= require("../models/User.model");
+async function SaveTransactions(amount,receiver_name){
+  router.post(
+    "/transactions",
+    [
+      check("amount", "anmout was not inserted").not().isEmpty(),
+      check("receiver_name","Receiver name was not found").not().isEmpty(),
+    ],
+    async (req, res) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          errors: errors.array()
+        });
+      }
+  
+      const { amount,receiver_name} = req.body;
+    
+      try {
+        transaction_history = new Transaction_history({
+         amount,
+         receiver_name
+        });
 
+        await transaction_history.save();
+      } catch (err) {
+        console.log(err.message);
+        res.status(500).send("Error in Saving");
+      }
+    }
+  );
 router.post(
   "/register",
   [
@@ -161,10 +191,11 @@ router.post('/envoyer', async (req, res) => {
           
           let solde = user_found.wdeposit;
           let newSolde = solde + montant;
-
+            let message = "Vous avez envoyer ";
           User.findOneAndUpdate( {
             compte : compte
           }, {$set: { wdeposit: newSolde} },{new: true} ,(err, result) => {
+            SaveTransactions(montant,message);
               if(err) throw err;
               console.log(user_found.wdeposit)
               res.json(result);
@@ -202,5 +233,5 @@ router.post('/retirer', async (req, res) => {
     })      
     .catch(err => res.status(400).json({message: err}));
 });
-
+}
 module.exports = router;

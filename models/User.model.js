@@ -14,6 +14,12 @@ const NaissanceSchema = new Schemas({
     lieu_naissance: {type: String, trim: true},
     date_naissance: {type: Date, trim: true}
 });
+const Transaction_history = mongoose.Schema({
+    account_type:{type:String},
+    account_number:{type:String},
+    amount:{type:String},
+    receiver_name:{type:String}
+}) 
 
 const UserSchema = mongoose.Schema({
     firstname: { type: String, required: true },
