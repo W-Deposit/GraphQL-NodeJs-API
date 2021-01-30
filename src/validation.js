@@ -1,6 +1,6 @@
 const Joi = require("@hapi/joi");
 
-//registartion validation
+//registration validation
 const registerValidation = (data) => {
   const schema = {
     name: Joi.string().min(6).required(),
