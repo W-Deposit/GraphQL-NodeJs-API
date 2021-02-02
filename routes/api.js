@@ -143,67 +143,61 @@ router.post('/envoyer', async (req, res) => {
   
   const { sender, receiver , montant } = req.body;
   if(!sender || !receiver || !montant) {
-    res.status(400).json('Le compte ou le montant ne doit pas etre vide')
+    return res.status(400).json('Le compte ou le montant ne doit pas etre vide');
+  } 
+
+  try {
+    // check sender account
+    const userSender = await User.findOne({ compte: sender });
+    if(!userSender){
+      return res.status(400).json(`Envoi: Ce compte: ${ sender } n'existe pas `);
+    }else{
+      
+      // get the sender solde
+      let soldeSender = userSender.wdeposit;
+      console.log(`compte ${ sender } : ${ soldeSender }`);
+
+      const userReceiver = await User.findOne({ compte: receiver});
+      if(!userReceiver){
+        return res.status(400).json(`Reception: Ce compte ${ receiver } n'existe pas`);
+      }else{
+
+        // check the receiver solde
+        let soldeReceiver = userReceiver.wdeposit;
+        console.log(`compte ${ receiver } : ${ soldeReceiver }`);
+
+        console.log(`le montant à envoyer vaut ${montant}`);
+        
+        // solde sender
+        let newSoldeSender = soldeSender - montant;
+
+        // update the sender data 
+        const updateSenderData = await User.findOneAndUpdate({ compte : sender }, 
+          {$set: { wdeposit: newSoldeSender} },
+          {new: true});
+
+        //solde receiver
+        let newSoldeReceiver = soldeReceiver + montant
+
+        // update the receiver data
+        const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
+          {$set: { wdeposit: newSoldeReceiver} },
+          {new: true});
+
+        res.json({
+          senderData: updateSenderData,
+          receiverData: updateReceiverData
+        });
+      }
+        
+      
+      
+    }         
+  } catch (error) {
+    console.log('erreur: ', error)
+    return res.status(400).json({msg: error});
   }
-  
-  
-  // check sender account
-  await User.findOne({ compte: sender })
-    .then(userSender =>{
-        if(!userSender){
-          res.status(400).json(`Envoi: Ce compte: ${ sender } n'existe pas `);
-        }else{
-          
-          // get the sender solde
-          let soldeSender = userSender.wdeposit;
-          console.log(`compte ${ sender } : ${ soldeSender }`)
-          res.json(`compte ${ sender } : ${ soldeSender }`);
-
-          User.findOne({ compte: receiver})
-            .then(userReceiver => {
-              if(!userReceiver){
-                res.status(400).json(`Reception: Ce compte ${ receiver } n'existe pas`);
-              }else{
-
-                // check the receiver solde
-                let soldeReceiver = userReceiver.wdeposit;
-                console.log(`compte ${ receiver } : ${ soldeReceiver }`)
-                res.json(`compte ${ receiver } : ${ soldeReceiver }`);
-              }
-
-            })
-            .catch(err => res.status(400).json({message: err}));
-
-            console.log(`le montant à envoyer vaut ${montant}`);
-            
-            // solde sender
-            let newSoldeSender = soldeSender - montant;
-
-            // update the sender data 
-            User.findOneAndUpdate({ compte : sender }, 
-              {$set: { wdeposit: newSoldeSender} },
-              {new: true} ,(err, result) => {
-                if(err) throw err;
-                console.log(`Sender data ${result}`);
-                res.json(result);
-            });
-
-            //solde receiver
-            let newSoldeReceiver = soldeReceiver + montant
-
-            // update the receiver data
-            User.findOneAndUpdate({ compte : receiver }, 
-              {$set: { wdeposit: newSoldeReceiver} },
-              {new: true} ,(err, result) => {
-                if(err) throw err;
-                console.log(`receiver data ${result}`);
-                res.json(result);
-            });
-
-          
-        }            
-    })      
-    .catch(err => res.status(400).json({message: err}));
+    
 });
 
 // ###################################################################################
