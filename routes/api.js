@@ -26,9 +26,7 @@ router.post(
 
     const { firstname,lastname,gender,phonenumber, email, password, compte, wdeposit } = req.body;
     try {
-      let user = await User.findOne({
-        email
-      });
+      let user = await User.findOne({ email });
       if (user) {
         return res.status(400).json({
           msg: "User Already Exists"
@@ -52,17 +50,13 @@ router.post(
       await user.save();
 
       const payload = {
-        user: {
-          id: user.id
-        }
+        user: { id: user.id }
       };
 
       jwt.sign(
         payload,
         "randomString",
-        {
-          expiresIn: 10000
-        },
+        { expiresIn: 10000 },
         (err, token) => {
           if (err) throw err;
           res.status(200).json({
@@ -76,6 +70,8 @@ router.post(
     }
   }
 );
+
+// ###################################################################################
 
 router.post(
   "/login",
@@ -94,9 +90,7 @@ router.post(
 
     const { email, password } = req.body;
     try {
-      let user = await User.findOne({
-        email
-      });
+      let user = await User.findOne({ email });
       if (!user)
         return res.status(400).json({
           message: "User Not Exist"
@@ -109,17 +103,13 @@ router.post(
         });
 
       const payload = {
-        user: {
-          id: user.id
-        }
+        user: { id: user.id }
       };
 
       jwt.sign(
         payload,
         "randomString",
-        {
-          expiresIn: 3600
-        },
+        { expiresIn: 3600 },
         (err, token) => {
           if (err) throw err;
           res.status(200).json({
@@ -136,6 +126,8 @@ router.post(
   }
 );
 
+// ###################################################################################
+
 router.get("/me", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -145,62 +137,126 @@ router.get("/me", auth, async (req, res) => {
   }
 });
 
+// ###################################################################################
+
 router.post('/envoyer', async (req, res) => {
   
-  const {compte , montant} = req.body;
-  if(!compte || !montant) {
-    res.status(400).json('Le compte ou le montant ne doit pas etre vide')
-  }
-  console.log(`le montant à envoyer vaut ${montant}`);
-  
-  await User.findOne({compte})
-    .then(user_found =>{
-        if(!user_found){
-          res.status(400).json(`Ce compte: ${compte} n'existe pas `);
-        }else{
-          
-          let solde = user_found.wdeposit;
-          let newSolde = solde + montant;
+  const { sender, receiver , montant } = req.body;
+  if(!sender || !receiver || !montant) {
+    return res.status(400).json('Le compte ou le montant ne doit pas etre vide');
+  } 
 
-          User.findOneAndUpdate( {
-            compte : compte
-          }, {$set: { wdeposit: newSolde} },{new: true} ,(err, result) => {
-              if(err) throw err;
-              console.log(user_found.wdeposit)
-              res.json(result);
-          });
-        }            
-    })      
-    .catch(err => res.status(400).json({message: err}));
+  try {
+    // check sender account
+    const userSender = await User.findOne({ compte: sender });
+    if(!userSender){
+      return res.status(400).json(`Envoi: Ce compte: ${ sender } n'existe pas `);
+    }else{
+      
+      // get the sender solde
+      let soldeSender = userSender.wdeposit;
+      console.log(`compte ${ sender } : ${ soldeSender }`);
+
+      const userReceiver = await User.findOne({ compte: receiver});
+      if(!userReceiver){
+        return res.status(400).json(`Reception: Ce compte ${ receiver } n'existe pas`);
+      }else{
+
+        // check the receiver solde
+        let soldeReceiver = userReceiver.wdeposit;
+        console.log(`compte ${ receiver } : ${ soldeReceiver }`);
+
+        console.log(`le montant à envoyer vaut ${montant}`);
+        
+        // solde sender
+        let newSoldeSender = soldeSender - montant;
+
+        // update the sender data 
+        const updateSenderData = await User.findOneAndUpdate({ compte : sender }, 
+          {$set: { wdeposit: newSoldeSender} },
+          {new: true});
+
+        //solde receiver
+        let newSoldeReceiver = soldeReceiver + montant
+
+        // update the receiver data
+        const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
+          {$set: { wdeposit: newSoldeReceiver} },
+          {new: true});
+
+        res.json({
+          senderData: updateSenderData,
+          receiverData: updateReceiverData
+        });
+      }
+      
+    }         
+  } catch (error) {
+    console.log('erreur: ', error)
+    return res.status(400).json({msg: error});
+  }
+    
 });
+
+// ###################################################################################
 
 router.post('/retirer', async (req, res) => {
   
-  const {compte , montant} = req.body;
-  if(!compte || !montant) {
-    res.status(400).json('Le compte ou le montant ne doit pas etre vide')
+  const { withDrawer, receiver , montant } = req.body;
+  if(!withDrawer || !receiver || !montant) {
+    return res.status(400).json('Le compte ou le montant ne doit pas etre vide');
+  } 
+
+  try {
+    // check withDrawer account
+    const userWithDrawer = await User.findOne({ compte: withDrawer });
+    if(!userWithDrawer){
+      return res.status(400).json(`Envoi: Ce compte: ${ withDrawer } n'existe pas `);
+    }else{
+      
+      // get the withDrawer solde
+      let soldewithDrawer = userWithDrawer.wdeposit;
+      console.log(`compte ${ withDrawer } : ${ soldewithDrawer }`);
+
+      const userReceiver = await User.findOne({ compte: receiver});
+      if(!userReceiver){
+        return res.status(400).json(`Reception: Ce compte ${ receiver } n'existe pas`);
+      }else{
+
+        // check the receiver solde
+        let soldeReceiver = userReceiver.wdeposit;
+        console.log(`compte ${ receiver } : ${ soldeReceiver }`);
+
+        console.log(`le montant à envoyer vaut ${montant}`);
+        
+        // solde withDrawer
+        let newSoldeWithDrawer = soldewithDrawer - montant;
+
+        // update the withDrawer data 
+        const updateWithDrawerData = await User.findOneAndUpdate({ compte : withDrawer }, 
+          {$set: { wdeposit: newSoldeWithDrawer} },
+          {new: true});
+
+        //solde receiver
+        let newSoldeReceiver = soldeReceiver + montant
+
+        // update the receiver data
+        const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
+          {$set: { wdeposit: newSoldeReceiver} },
+          {new: true});
+
+        res.json({
+          withDrawerData: updateWithDrawerData,
+          receiverData: updateReceiverData
+        });
+      }
+      
+    }         
+  } catch (error) {
+    console.log('erreur: ', error)
+    return res.status(400).json({msg: error});
   }
-  console.log(`le montant à retirer vaut ${montant}`);
-  
-  await User.findOne({compte})
-    .then(user_found =>{
-        if(!user_found){
-          res.status(400).json(`Ce compte: ${compte} n'existe pas `);
-        }else{
-
-          let solde = user_found.wdeposit;
-          let newSolde = solde - montant;
-
-          User.findOneAndUpdate( {
-            compte : compte
-          }, {$set: { wdeposit: newSolde} },{new: true} ,(err, result) => {
-              if(err) throw err;
-              console.log(user_found.wdeposit)
-              res.json(result);
-          });
-        }            
-    })      
-    .catch(err => res.status(400).json({message: err}));
+    
 });
 
 module.exports = router;
