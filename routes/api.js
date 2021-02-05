@@ -238,22 +238,26 @@ router.post('/retirer', async (req, res) => {
         let newSoldeWithDrawer = soldewithDrawer - montant;
 
         // update the withDrawer data 
-        const updateWithDrawerData = await User.findOneAndUpdate({ compte : withDrawer }, 
-          {$set: { wdeposit: newSoldeWithDrawer} },
-          {new: true});
-
-        //solde receiver
-        let newSoldeReceiver = soldeReceiver + montant
-
-        // update the receiver data
-        const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
-          {$set: { wdeposit: newSoldeReceiver} },
-          {new: true});
-
-        res.json({
-          withDrawerData: updateWithDrawerData,
-          receiverData: updateReceiverData
-        });
+        if(montant <= soldewithDrawer){
+          const updateWithDrawerData = await User.findOneAndUpdate({ compte : withDrawer }, 
+            {$set: { wdeposit: newSoldeWithDrawer} },
+            {new: true});
+  
+          //solde receiver
+          let newSoldeReceiver = soldeReceiver + montant
+  
+          // update the receiver data
+          const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
+            {$set: { wdeposit: newSoldeReceiver} },
+            {new: true});
+  
+          res.json({
+            withDrawerData: updateWithDrawerData,
+            receiverData: updateReceiverData
+          });
+        }else{
+          return res.status(400).json({msg: `Le montant à retirer est supérieur à votre solde`});
+        }
       }
       
     }         
