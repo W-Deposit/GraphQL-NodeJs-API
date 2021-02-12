@@ -267,10 +267,25 @@ router.post('/retirer', async (req, res) => {
             {$set: { wdeposit: newSoldeReceiver} },
             {new: true});
   
-          res.json({
-            withDrawerData: updateWithDrawerData,
-            receiverData: updateReceiverData
+          // save transaction
+          const operation = 'retrait';
+          const newTransaction = new Transaction({
+            client: withDrawer,
+            destinataire: receiver,
+            montant: montant,
+            operation: operation
           });
+
+          newTransaction.save()
+            .then(() => {
+              console.log(`newTransaction: ${newTransaction}`);
+              res.json({
+                senderData: updateWithDrawerData,
+                receiverData: updateReceiverData,
+                transactionData: newTransaction
+              });
+            });  
+
         }else{
           return res.status(400).json({msg: `Le montant à retirer est supérieur à votre solde`});
         }
