@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const User = require("../models/User.model");
+const Transaction = require("../models/Transaction.model");
 
 router.post(
   "/register",
@@ -184,11 +185,26 @@ router.post('/envoyer', async (req, res) => {
           const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
             {$set: { wdeposit: newSoldeReceiver} },
             {new: true});
-  
-          res.json({
-            senderData: updateSenderData,
-            receiverData: updateReceiverData
+
+          // save transaction
+          const operation = 'envoi';
+          const newTransaction = new Transaction({
+            client: sender,
+            destinataire: receiver,
+            montant: montant,
+            operation: operation
           });
+
+          newTransaction.save()
+            .then(() => {
+              console.log(`newTransaction: ${newTransaction}`);
+              res.json({
+                senderData: updateSenderData,
+                receiverData: updateReceiverData,
+                transactionData: newTransaction
+              });
+            });  
+          
         }else{
           return res.status(400).json({msg: `Le montant à envoyer est supérieur à votre solde`});
         }
