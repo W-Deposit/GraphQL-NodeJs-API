@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const User = require("../models/User.model");
+const Transaction = require("../models/Transaction.model");
 
 router.post(
   "/register",
@@ -172,22 +173,42 @@ router.post('/envoyer', async (req, res) => {
         let newSoldeSender = soldeSender - montant;
 
         // update the sender data 
-        const updateSenderData = await User.findOneAndUpdate({ compte : sender }, 
-          {$set: { wdeposit: newSoldeSender} },
-          {new: true});
+        if(montant <= soldeSender){
+          const updateSenderData = await User.findOneAndUpdate({ compte : sender }, 
+            {$set: { wdeposit: newSoldeSender} },
+            {new: true});
+  
+          //solde receiver
+          let newSoldeReceiver = soldeReceiver + montant
+  
+          // update the receiver data
+          const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
+            {$set: { wdeposit: newSoldeReceiver} },
+            {new: true});
 
-        //solde receiver
-        let newSoldeReceiver = soldeReceiver + montant
+          // save transaction
+          const operation = 'envoi';
+          const newTransaction = new Transaction({
+            client: sender,
+            destinataire: receiver,
+            montant: montant,
+            operation: operation
+          });
 
-        // update the receiver data
-        const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
-          {$set: { wdeposit: newSoldeReceiver} },
-          {new: true});
-
-        res.json({
-          senderData: updateSenderData,
-          receiverData: updateReceiverData
-        });
+          newTransaction.save()
+            .then(() => {
+              console.log(`newTransaction: ${newTransaction}`);
+              res.json({
+                senderData: updateSenderData,
+                receiverData: updateReceiverData,
+                transactionData: newTransaction
+              });
+            });  
+          
+        }else{
+          return res.status(400).json({msg: `Le montant à envoyer est supérieur à votre solde`});
+        }
+        
       }
       
     }         
@@ -233,22 +254,41 @@ router.post('/retirer', async (req, res) => {
         let newSoldeWithDrawer = soldewithDrawer - montant;
 
         // update the withDrawer data 
-        const updateWithDrawerData = await User.findOneAndUpdate({ compte : withDrawer }, 
-          {$set: { wdeposit: newSoldeWithDrawer} },
-          {new: true});
+        if(montant <= soldewithDrawer){
+          const updateWithDrawerData = await User.findOneAndUpdate({ compte : withDrawer }, 
+            {$set: { wdeposit: newSoldeWithDrawer} },
+            {new: true});
+  
+          //solde receiver
+          let newSoldeReceiver = soldeReceiver + montant
+  
+          // update the receiver data
+          const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
+            {$set: { wdeposit: newSoldeReceiver} },
+            {new: true});
+  
+          // save transaction
+          const operation = 'retrait';
+          const newTransaction = new Transaction({
+            client: withDrawer,
+            destinataire: receiver,
+            montant: montant,
+            operation: operation
+          });
 
-        //solde receiver
-        let newSoldeReceiver = soldeReceiver + montant
+          newTransaction.save()
+            .then(() => {
+              console.log(`newTransaction: ${newTransaction}`);
+              res.json({
+                senderData: updateWithDrawerData,
+                receiverData: updateReceiverData,
+                transactionData: newTransaction
+              });
+            });  
 
-        // update the receiver data
-        const updateReceiverData = await User.findOneAndUpdate({ compte : receiver }, 
-          {$set: { wdeposit: newSoldeReceiver} },
-          {new: true});
-
-        res.json({
-          withDrawerData: updateWithDrawerData,
-          receiverData: updateReceiverData
-        });
+        }else{
+          return res.status(400).json({msg: `Le montant à retirer est supérieur à votre solde`});
+        }
       }
       
     }         
