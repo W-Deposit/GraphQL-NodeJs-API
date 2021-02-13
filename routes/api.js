@@ -61,7 +61,9 @@ router.post(
         (err, token) => {
           if (err) throw err;
           res.status(200).json({
-            token
+            token,
+            username: user.email,
+            wdeposit: user.wdeposit
           });
         }
       );
@@ -114,7 +116,9 @@ router.post(
         (err, token) => {
           if (err) throw err;
           res.status(200).json({
-            token
+            token,
+            username: user.email,
+            wdeposit: user.wdeposit
           });
         }
       );
