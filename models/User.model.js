@@ -16,9 +16,9 @@ const NaissanceSchema = new Schemas({
 });
 
 const UserSchema = mongoose.Schema({
-    firstname: { type: String, required: true },
-    lastname: { type: String, required:true },
-    gender: { type: String, required: true },
+    firstname: { type: String },
+    lastname: { type: String },
+    gender: { type: String },
     phonenumber: { type: String, required: true },
     email: { type: String, required: true },
     password:{ type:String, required:true },

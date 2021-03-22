@@ -21,4 +21,4 @@ mongoose.connect(process.env.DBPATH, {useUnifiedTopology: true, useNewUrlParser:
 
 const port = process.env.PORT || 3030;
 
-app.listen(port, () => console.log(`Server is running at : http://localhost: ${port} `));
+app.listen(port, () => console.log(`Server is running at : http://localhost:${port} `));
