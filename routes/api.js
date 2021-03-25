@@ -25,7 +25,7 @@ router.post(
       });
     }
 
-    const { firstname,lastname,gender,phonenumber, email, password, wdeposit } = req.body;
+    const { firstname,lastname,gender,phonenumber, email, password } = req.body;
     try {
       let user = await User.findOne({ email });
       if (user) {
@@ -36,6 +36,8 @@ router.post(
 
       const nbUser = await User.find().countDocuments();
       const compte = 'WD-'.concat(nbUser+1);
+
+      const wdeposit = 0;
 
       user = new User({
         email,
@@ -66,6 +68,7 @@ router.post(
           res.status(200).json({
             token,
             username: user.email,
+            compte: user.compte,
             wdeposit: user.wdeposit
           });
         }
