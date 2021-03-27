@@ -25,7 +25,7 @@ router.post(
       });
     }
 
-    const { firstname,lastname,gender,phonenumber, email, password, compte, wdeposit } = req.body;
+    const { firstname,lastname,gender,phonenumber, email, password, wdeposit } = req.body;
     try {
       let user = await User.findOne({ email });
       if (user) {
@@ -33,6 +33,9 @@ router.post(
           msg: "User Already Exists"
         });
       }
+
+      const nbUser = await User.find().countDocuments();
+      const compte = 'WD-'.concat(nbUser+1);
 
       user = new User({
         email,
@@ -302,5 +305,6 @@ router.post('/retirer', async (req, res) => {
   }
     
 });
+
 
 module.exports = router;
