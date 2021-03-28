@@ -124,6 +124,7 @@ router.post(
           res.status(200).json({
             token,
             username: user.email,
+            compte: user.compte,
             wdeposit: user.wdeposit
           });
         }
