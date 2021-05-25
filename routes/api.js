@@ -310,5 +310,13 @@ router.post('/retirer', async (req, res) => {
     
 });
 
+router.post('/history', async (req, res) => {
+  const { user } = req.body;
+  if(!user)return res.status(400).json({msg:'utilisateur inconnu ou vide'})
+
+  const userTransaction = await Transaction.find({ $or: [{client: user}, {destinataire:user}]});
+  return res.json({dataTransaction: userTransaction});
+})
+
 
 module.exports = router;
