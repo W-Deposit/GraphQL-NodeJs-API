@@ -26,7 +26,7 @@ router.post(
       });
     }
 
-    const { firstname,lastname,gender,phonenumber, email, password, pinTransfer } = req.body;
+    const { firstname,lastname,gender,phonenumber, email, password, role, pinTransfer } = req.body;
     try {
       let user = await User.findOne({ email });
       if (user) {
@@ -49,6 +49,7 @@ router.post(
         phonenumber,
         compte,
         wdeposit,
+        role,
         pinTransfer
       });
 
@@ -72,6 +73,7 @@ router.post(
             username: user.email,
             compte: user.compte,
             wdeposit: user.wdeposit,
+            role: user.role,
             pinTransfer: user.pinTransfer
           });
         }
