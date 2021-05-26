@@ -131,6 +131,7 @@ router.post(
             username: user.email,
             compte: user.compte,
             wdeposit: user.wdeposit,
+            role: user.role,
             pinTransfer: user.pinTransfer
           });
         }
