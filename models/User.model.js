@@ -24,6 +24,8 @@ const UserSchema = mongoose.Schema({
     password:{ type:String, required:true },
     compte: {type: String },
     wdeposit: {type: Number, default: 0 },
+    role:{ type: String, default:'Simple'},
+    pinTransfer: {type: String, default:'000000'},
     createdAt: {type: Date, default: Date.now}
 });
 
