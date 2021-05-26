@@ -15,7 +15,8 @@ router.post(
     check("lastname","Please enter your lastname").isLength(),
     check("email", "Please enter a valid email").isEmail(),
     check("phonenumber","Please enter a valid mobile").not().isEmpty(),
-    check("password", "Please enter a valid password").isLength({min: 6})
+    check("password", "Please enter a valid password").isLength({min: 6}),
+    check("pinTransfer", "Please enter a valid pin").isLength({min: 6})
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -25,7 +26,7 @@ router.post(
       });
     }
 
-    const { firstname,lastname,gender,phonenumber, email, password } = req.body;
+    const { firstname,lastname,gender,phonenumber, email, password, role, pinTransfer } = req.body;
     try {
       let user = await User.findOne({ email });
       if (user) {
@@ -47,7 +48,9 @@ router.post(
         gender,
         phonenumber,
         compte,
-        wdeposit
+        wdeposit,
+        role,
+        pinTransfer
       });
 
       const salt = await bcrypt.genSalt(10);
@@ -69,7 +72,9 @@ router.post(
             token,
             username: user.email,
             compte: user.compte,
-            wdeposit: user.wdeposit
+            wdeposit: user.wdeposit,
+            role: user.role,
+            pinTransfer: user.pinTransfer
           });
         }
       );
@@ -125,7 +130,9 @@ router.post(
             token,
             username: user.email,
             compte: user.compte,
-            wdeposit: user.wdeposit
+            wdeposit: user.wdeposit,
+            role: user.role,
+            pinTransfer: user.pinTransfer
           });
         }
       );
