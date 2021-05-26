@@ -128,7 +128,8 @@ router.post(
             token,
             username: user.email,
             compte: user.compte,
-            wdeposit: user.wdeposit
+            wdeposit: user.wdeposit,
+            pinTransfer: user.pinTransfer
           });
         }
       );
